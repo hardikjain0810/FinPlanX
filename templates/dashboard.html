@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Investment Advisor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>FinPlanX</h2>
+                <div class="user-info">
+                    <span class="user-name">{{ user.name }}</span>
+                    <span class="user-email">{{ user.email }}</span>
+                </div>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="active" data-section="prediction-section">Investment Prediction</li>
+                <li data-section="saved-plans-section">Saved Plans</li>
+                <li data-section="about-section">About</li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </nav>
+        
+        <main class="main-content">
+            <section id="prediction-section" class="content-section active">
+                <h1>Investment Prediction</h1>
+                <div class="prediction-form-container">
+                    <form id="predictionForm" class="prediction-form">
+                        <div class="form-group">
+                            <label for="investment_amount">Investment Amount (₹)</label>
+                            <input type="number" id="investment_amount" name="investment_amount" min="1000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="risk_tolerance">Risk Tolerance</label>
+                            <select id="risk_tolerance" name="risk_tolerance" required>
+                                <option value="1">Very Conservative</option>
+                                <option value="2">Conservative</option>
+                                <option value="3" selected>Moderate</option>
+                                <option value="4">Aggressive</option>
+                                <option value="5">Very Aggressive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="investment_period">Investment Period (Years)</label>
+                            <input type="number" id="investment_period" name="investment_period" min="1" max="30" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Predict Returns</button>
+                    </form>
+                </div>
+                
+                <div id="results-container" class="results-container hidden">
+                    <div class="results-header">
+                        <h2>Investment Prediction Results</h2>
+                        <button id="saveButton" class="btn btn-secondary">Save This Plan</button>
+                    </div>
+                    
+                    <div class="results-summary">
+                        <div class="summary-card">
+                            <h3>Initial Investment</h3>
+                            <p id="initialInvestment">₹0</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Expected Return Rate</h3>
+                            <p id="returnRate">0%</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Final Value</h3>
+                            <p id="finalValue">₹0</p>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Total Growth</h3>
+                            <p id="totalGrowth">0%</p>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-container">
+                        <div class="chart-card">
+                            <h3>Growth Projection</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="growthChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <h3>Asset Allocation</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="allocationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recommendations-container">
+                        <h3>Recommended Investments</h3>
+                        <div class="recommendations-table-container">
+                            <table id="recommendationsTable" class="recommendations-table">
+                                <thead>
+                                    <tr>
+                                        <th>Investment</th>
+                                        <th>Allocation</th>
+                                        <th>Expected Return</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Recommendations will be inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="saved-plans-section" class="content-section">
+                <h1>Saved Investment Plans</h1>
+                <div id="savedPlansContainer" class="saved-plans-container">
+                    <!-- Saved plans will be inserted here -->
+                </div>
+            </section>
+            
+            <!-- New About Section -->
+            <section id="about-section" class="content-section">
+                <h1>About FinPlanX</h1>
+                
+                <div class="about-container">
+                    <div class="about-header">
+                        <h2>Smart Investment Planning Made Simple</h2>
+                        <p>Your personal AI-powered financial advisor that helps you make informed investment decisions</p>
+                    </div>
+                    
+                    <p>FinPlanX is a cutting-edge application designed to democratize financial planning and investment advice. Our platform leverages advanced machine learning algorithms to analyze market trends, risk factors, and historical data to provide personalized investment recommendations tailored to your specific financial goals and risk tolerance.</p>
+                    
+                    <div class="about-grid">
+                        <div class="about-card">
+                            <h3><i class="fas fa-robot"></i> AI-Powered Analysis</h3>
+                            <p>Our application uses sophisticated machine learning models trained on extensive financial datasets to predict investment returns and recommend optimal asset allocations based on your risk profile and investment horizon.</p>
+                            <div class="tech-list">
+                                <span class="tech-tag">Machine Learning</span>
+                                <span class="tech-tag">Predictive Analytics</span>
+                                <span class="tech-tag">Data Science</span>
+                            </div>
+                        </div>
+                        
+                        <div class="about-card">
+                            <h3><i class="fas fa-chart-line"></i> Advanced Visualization</h3>
+                            <p>Understand your investment journey through interactive charts and visual representations of growth projections and asset allocations, making complex financial data easy to comprehend.</p>
+                            <div class="tech-list">
+                                <span class="tech-tag">Chart.js</span>
+                                <span class="tech-tag">Data Visualization</span>
+                                <span class="tech-tag">Interactive Dashboards</span>
+                            </div>
+                        </div>
+                        
+                        <div class="about-card">
+                            <h3><i class="fas fa-shield-alt"></i> Secure & Private</h3>
+                            <p>Your financial data and personal information are protected with industry-standard security measures. We prioritize your privacy and ensure your data is never shared with third parties.</p>
+                            <div class="tech-list">
+                                <span class="tech-tag">Encryption</span>
+                                <span class="tech-tag">Secure Authentication</span>
+                                <span class="tech-tag">Data Protection</span>
+                            </div>
+                        </div>
+                        
+                        <div class="about-card">
+                            <h3><i class="fas fa-code"></i> Technology Stack</h3>
+                            <p>Built with modern technologies to ensure reliability, performance, and a seamless user experience across all devices.</p>
+                            <div class="tech-list">
+                                <span class="tech-tag">Python</span>
+                                <span class="tech-tag">Flask</span>
+                                <span class="tech-tag">MongoDB</span>
+                                <span class="tech-tag">HTML5/CSS3</span>
+                                <span class="tech-tag">JavaScript</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-content">
+                    <div class="footer-logo">FinPlanX</div>
+                    
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>FinPlanX@gmail.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+91 9392996731</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Hyderabad, India</span>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-social">
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    </div>
+                    
+                    <div class="footer-bottom">
+                        <p>&copy; 2025 FinPlanX. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
